@@ -24,7 +24,7 @@ end
 if ~strcmp(Simul.Name,SimulName)
 	disp('Simulation names do not aggree. Using file name...');
 end
-if exist(vtf_fn,'file')
+if exist(vtf_fn,'file') && ~exist([SimulName,'S.vtf'],'file')
 	copyfile(vtf_fn,[SimulName,'S.vtf']);
 end
 
@@ -53,9 +53,10 @@ if isfield(Simul,'Atom')
 		idx1= idx(end);
 		AtomRadius	= Simul.Atom.radius(idx0);
 		AtomName	= Simul.Atom.name{idx0};
+		AtomType	= AtomTypes(typ);
 		AtomQ		= Simul.Atom.q(idx0);
 		fprintf(vtfID,'atom %d:%d radius %f name %s type %d q %f\n',...
-			idx0,idx1,AtomRadius,AtomName,typ,AtomQ);
+			idx0-1,idx1-1,AtomRadius,AtomName,AtomType,AtomQ);
 	end
 	LineNumber	= LineNumber + nTyp;
 	
@@ -63,7 +64,7 @@ if isfield(Simul,'Atom')
 			&& isfield(Simul,'Bond')
 		nBond	= size(Simul.Bond,1);
 		for BondIdx = 1:nBond
-			fprintf(vtfID,'bond %d:%d\n',Simul.Bond(BondIdx,:));
+			fprintf(vtfID,'bond %d:%d\n',Simul.Bond(BondIdx,:)-1);
 		end
 		LineNumber	= LineNumber + nBond;
 	end
